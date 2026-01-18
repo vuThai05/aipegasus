@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
+import { chat } from "@/lib/api-client"
 
 import { useAppStore } from "@/lib/store"
 import { Sidebar } from "@/components/sidebar"
@@ -41,7 +42,6 @@ export default function HomePage() {
       addMessage(chatId, { role: "user", content: message })
 
       // Create pending assistant message for loading state
-      // Generate ID before adding to ensure we can update it later
       const assistantMessageId = Date.now().toString()
       addMessage(
         chatId,
@@ -53,18 +53,13 @@ export default function HomePage() {
         assistantMessageId,
       )
 
-      // Make API call - Replace this with your actual API endpoint
-      // For now, keeping setTimeout as placeholder until API is ready
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Simulate API response (replace with actual API call)
-      const response = {
-        content: "This is a simulated response from PegaSus. In a real implementation, this would be connected to an AI model to provide helpful academic assistance.",
-      }
+      // Make API call
+      const response = await chat(message)
 
       // Update assistant message with response
       updateMessage(chatId, assistantMessageId, {
-        content: response.content,
+        content: response.answer,
+        sources: response.sources,
         isLoading: false,
       })
     } catch (error) {
@@ -94,16 +89,16 @@ export default function HomePage() {
     const chatId = currentChatId
     if (!chatId) return
 
-    const chat = chats.find((c) => c.id === chatId)
-    if (!chat) return
+    const foundChat = chats.find((c) => c.id === chatId)
+    if (!foundChat) return
 
     // Find the errored assistant message
-    const erroredMessage = chat.messages.find((m) => m.id === messageId)
+    const erroredMessage = foundChat.messages.find((m) => m.id === messageId)
     if (!erroredMessage || erroredMessage.role !== "assistant" || !erroredMessage.error) return
 
     // Find the preceding user message
-    const messageIndex = chat.messages.indexOf(erroredMessage)
-    const userMessage = chat.messages
+    const messageIndex = foundChat.messages.indexOf(erroredMessage)
+    const userMessage = foundChat.messages
       .slice(0, messageIndex)
       .reverse()
       .find((m) => m.role === "user")
@@ -128,15 +123,12 @@ export default function HomePage() {
       setLoading(true)
       setError(null)
 
-      // Make API call (replace with actual API call)
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      const response = {
-        content: `This is a retried response from PegaSus (attempt ${retryCount}).`,
-      }
+      // Make API call
+      const response = await chat(userMessage.content)
 
       updateMessage(chatId, messageId, {
-        content: response.content,
+        content: response.answer,
+        sources: response.sources,
         isLoading: false,
       })
     } catch (error) {
@@ -156,7 +148,7 @@ export default function HomePage() {
     <div className="flex h-screen bg-background">
       <Sidebar />
 
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="flex items-center justify-end gap-4 p-4">
           <Button variant="outline">Click me</Button>
@@ -166,9 +158,11 @@ export default function HomePage() {
         {/* Content */}
         {currentChat && currentChat.messages.length > 0 ? (
           // Conversation View
-          <div className="flex-1 flex flex-col">
-            <ChatConversation messages={currentChat.messages} onRetry={handleRetry} />
-            <div className="p-4 space-y-2">
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
+              <ChatConversation messages={currentChat.messages} onRetry={handleRetry} />
+            </div>
+            <div className="border-t bg-background p-4 space-y-2">
               <ChatInput onSend={handleSend} className="max-w-3xl mx-auto" isLoading={isLoading} />
               <p className="text-xs text-muted-foreground text-center max-w-3xl mx-auto">
                 PegaSus can make mistakes, so double-check important details.
