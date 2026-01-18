@@ -126,7 +126,7 @@ export default function SearchPage() {
                 placeholder="Search your chat history..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 py-6 rounded-xl bg-[#373737] dark:bg-[#373737] bg-secondary border-transparent focus:border-primary"
+                className="pl-12 py-6 rounded-xl bg-secondary border-transparent focus:border-primary"
               />
             </div>
 
@@ -141,7 +141,7 @@ export default function SearchPage() {
                       "px-5 py-2.5 rounded-full text-base font-medium transition-colors",
                       modeFilter === filter.id
                         ? "bg-primary text-primary-foreground"
-                        : "bg-[#373737] dark:bg-[#373737] bg-secondary hover:bg-[#505050] dark:hover:bg-[#505050]",
+                        : "bg-secondary hover:bg-sidebar-accent",
                     )}
                   >
                     {filter.label}
@@ -150,7 +150,7 @@ export default function SearchPage() {
               </div>
 
               <Select value={timeFilter} onValueChange={setTimeFilter}>
-                <SelectTrigger className="w-36 h-11 text-base bg-[#373737] dark:bg-[#373737] bg-secondary border-transparent hover:bg-[#505050] dark:hover:bg-[#505050]">
+                <SelectTrigger className="w-36 h-11 text-base bg-secondary border-transparent hover:bg-sidebar-accent">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -192,7 +192,7 @@ export default function SearchPage() {
                             autoFocus
                           />
                         ) : (
-                          <div className="flex items-center gap-4 p-4 rounded-xl bg-[#373737] dark:bg-[#373737] bg-secondary hover:bg-[#505050] dark:hover:bg-[#505050] transition-colors">
+                          <div className="flex items-center gap-4 p-4 rounded-xl bg-secondary hover:bg-sidebar-accent transition-colors">
                             <button
                               onClick={() => {
                                 setCurrentChatId(chat.id)
@@ -222,7 +222,7 @@ export default function SearchPage() {
                                   variant="ghost"
                                   size="icon"
                                   className={cn(
-                                    "h-8 w-8 shrink-0 hover:bg-[#606060] dark:hover:bg-[#606060] transition-opacity",
+                                    "h-8 w-8 shrink-0 hover:bg-sidebar-accent transition-opacity",
                                     hoveredChat === chat.id ? "opacity-100" : "opacity-0",
                                   )}
                                   onClick={(e) => e.stopPropagation()}

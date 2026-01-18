@@ -26,9 +26,9 @@ export function SettingsModal() {
       <div className="absolute inset-0 bg-black/50" onClick={() => setSettingsOpen(false)} />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-3xl max-h-[80vh] bg-card rounded-2xl shadow-2xl overflow-hidden flex">
+      <div className="relative z-10 w-full max-w-4xl max-h-[80vh] bg-card rounded-2xl shadow-2xl overflow-hidden flex">
         {/* Left Navigation */}
-        <div className="w-48 bg-sidebar p-4 shrink-0">
+        <div className="w-56 bg-sidebar p-4 shrink-0">
           <h2 className="font-semibold mb-4 px-2">Settings</h2>
           <nav className="space-y-1">
             {settingsTabs.map((tab) => (
@@ -36,12 +36,12 @@ export function SettingsModal() {
                 key={tab.id}
                 onClick={() => setSettingsTab(tab.id)}
                 className={cn(
-                  "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm transition-colors",
+                  "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm transition-colors whitespace-nowrap",
                   settingsTab === tab.id ? "bg-sidebar-accent text-primary" : "hover:bg-sidebar-accent/50",
                 )}
               >
-                <tab.icon className="h-4 w-4" />
-                {tab.label}
+                <tab.icon className="h-4 w-4 shrink-0" />
+                <span>{tab.label}</span>
               </button>
             ))}
           </nav>
