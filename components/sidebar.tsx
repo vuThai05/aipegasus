@@ -82,12 +82,9 @@ export function Sidebar() {
         )}
       </div>
 
-      {/* Navigation - fade in/out */}
+      {/* Navigation - icons remain visible when collapsed */}
       <nav
-        className={cn(
-          "px-2 space-y-1 transition-opacity duration-200",
-          sidebarCollapsed ? "opacity-0 pointer-events-none" : "opacity-100",
-        )}
+        className="px-2 space-y-1"
         onClick={(e) => e.stopPropagation()}
       >
         {navItems.map((item) => {
@@ -101,7 +98,7 @@ export function Sidebar() {
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-sidebar-foreground hover:bg-sidebar-accent",
-                sidebarCollapsed && "justify-center",
+                sidebarCollapsed && "justify-center px-0",
               )}
             >
               <item.icon className="h-5 w-5 shrink-0" />
