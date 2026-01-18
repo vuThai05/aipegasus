@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
+import { v4 as uuidv4 } from "uuid"
 
 import { useAppStore } from "@/lib/store"
 import { Sidebar } from "@/components/sidebar"
@@ -42,7 +43,7 @@ export default function HomePage() {
 
       // Create pending assistant message for loading state
       // Generate ID before adding to ensure we can update it later
-      const assistantMessageId = Date.now().toString()
+      const assistantMessageId = uuidv4()
       addMessage(
         chatId,
         {

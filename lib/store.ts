@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { v4 as uuidv4 } from "uuid"
 
 export type Mode = "tutor" | "research" | "exam"
 
@@ -102,7 +103,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   createNewChat: () => {
     const newChat: Chat = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       title: "New Chat",
       mode: get().currentMode,
       messages: [],
@@ -118,7 +119,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   addMessage: (chatId, message, messageId?: string) => {
     const newMessage: Message = {
       ...message,
-      id: messageId || Date.now().toString(),
+      id: messageId || uuidv4(),
       timestamp: new Date(),
     }
     set((state) => ({
