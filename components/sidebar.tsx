@@ -45,38 +45,40 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "relative flex flex-col h-screen bg-[#373737] dark:bg-[#373737] bg-secondary border-r border-sidebar-border transition-all duration-300 ease-in-out overflow-hidden",
+        "relative flex flex-col h-screen bg-secondary border-r border-sidebar-border transition-all duration-300 ease-in-out overflow-hidden",
         sidebarCollapsed ? "w-16" : "w-64",
+        sidebarCollapsed && "cursor-pointer",
       )}
+      onClick={() => {
+        if (sidebarCollapsed) {
+          setSidebarCollapsed(false)
+        }
+      }}
     >
-      <div className="flex items-center justify-center p-4 h-16">
+      <div className="flex items-center justify-between p-4 h-16 shrink-0">
         {sidebarCollapsed ? (
-          // Collapsed: Logo is clickable to expand
-          <button
-            onClick={() => setSidebarCollapsed(false)}
-            className="flex items-center justify-center transition-transform duration-200 hover:scale-110"
-            aria-label="Expand sidebar"
-          >
-            <PegasusLogo size={28} />
-          </button>
+          // Collapsed: Logo at top-left, entire sidebar clickable to expand
+          <PegasusLogo size={28} className="mx-auto" />
         ) : (
-          // Expanded: Show hamburger, logo, and title
-          <div className="flex items-center justify-between w-full">
+          // Expanded: Logo at top-left, hamburger at top-right
+          <>
+            <Link href="/" className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <PegasusLogo size={28} />
+              <span className="font-semibold text-primary">PegaSus</span>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setSidebarCollapsed(true)}
-              className="h-8 w-8 shrink-0 hover:bg-[#505050] dark:hover:bg-[#505050]"
+              onClick={(e) => {
+                e.stopPropagation()
+                setSidebarCollapsed(true)
+              }}
+              className="h-8 w-8 shrink-0 hover:bg-sidebar-accent"
               aria-label="Collapse sidebar"
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <Link href="/" className="flex items-center gap-2">
-              <PegasusLogo size={28} />
-              <span className="font-semibold text-primary">PegaSus</span>
-            </Link>
-            <div className="w-8" /> {/* Spacer for centering */}
-          </div>
+          </>
         )}
       </div>
 
@@ -84,8 +86,9 @@ export function Sidebar() {
       <nav
         className={cn(
           "px-2 space-y-1 transition-opacity duration-200",
-          sidebarCollapsed ? "opacity-100" : "opacity-100",
+          sidebarCollapsed ? "opacity-0 pointer-events-none" : "opacity-100",
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         {navItems.map((item) => {
           const isActive = pathname === item.href
@@ -97,7 +100,7 @@ export function Sidebar() {
                 "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground hover:bg-[#505050] dark:hover:bg-[#505050]",
+                  : "text-sidebar-foreground hover:bg-sidebar-accent",
                 sidebarCollapsed && "justify-center",
               )}
             >
@@ -109,7 +112,7 @@ export function Sidebar() {
       </nav>
 
       {/* New Chat Button */}
-      <div className="px-2 mt-4">
+      <div className="px-2 mt-4" onClick={(e) => e.stopPropagation()}>
         <Button
           onClick={() => {
             createNewChat()
@@ -127,6 +130,7 @@ export function Sidebar() {
           "flex-1 overflow-y-auto px-2 mt-6 transition-opacity duration-200",
           sidebarCollapsed ? "opacity-0 pointer-events-none" : "opacity-100",
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         {!sidebarCollapsed && (
           <>
@@ -156,10 +160,13 @@ export function Sidebar() {
                       autoFocus
                     />
                   ) : (
-                    <div className="flex items-center rounded-lg bg-[#4a4a4a] dark:bg-[#4a4a4a] bg-secondary/80 hover:bg-[#505050] dark:hover:bg-[#505050] transition-colors">
+                    <div className="flex items-center rounded-lg bg-secondary/80 hover:bg-sidebar-accent transition-colors">
                       <Link
                         href="/"
-                        onClick={() => setCurrentChatId(chat.id)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setCurrentChatId(chat.id)
+                        }}
                         className="flex-1 px-3 py-2 text-sm truncate"
                       >
                         {chat.title}
@@ -170,10 +177,13 @@ export function Sidebar() {
                             variant="ghost"
                             size="icon"
                             className={cn(
-                              "h-7 w-7 mr-1 shrink-0 hover:bg-[#606060] dark:hover:bg-[#606060] transition-opacity",
+                              "h-7 w-7 mr-1 shrink-0 hover:bg-sidebar-accent transition-opacity",
                               hoveredChat === chat.id ? "opacity-100" : "opacity-0",
                             )}
-                            onClick={(e) => e.preventDefault()}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                            }}
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
@@ -229,11 +239,11 @@ export function Sidebar() {
       </div>
 
       {/* Settings */}
-      <div className="mt-auto p-2 border-t border-sidebar-border">
+      <div className="mt-auto p-2 border-t border-sidebar-border" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={() => setSettingsOpen(true)}
           className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left transition-colors hover:bg-[#505050] dark:hover:bg-[#505050]",
+            "flex items-center gap-3 px-3 py-2 rounded-lg w-full text-left transition-colors hover:bg-sidebar-accent",
             sidebarCollapsed && "justify-center",
           )}
         >

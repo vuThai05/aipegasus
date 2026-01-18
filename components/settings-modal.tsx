@@ -26,7 +26,7 @@ export function SettingsModal() {
       <div className="absolute inset-0 bg-black/50" onClick={() => setSettingsOpen(false)} />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-3xl max-h-[80vh] bg-card rounded-2xl shadow-2xl overflow-hidden flex">
+      <div className="relative z-10 w-full max-w-4xl max-h-[80vh] bg-card rounded-2xl shadow-2xl overflow-hidden flex">
         {/* Left Navigation */}
         <div className="w-48 bg-sidebar p-4 shrink-0">
           <h2 className="font-semibold mb-4 px-2">Settings</h2>

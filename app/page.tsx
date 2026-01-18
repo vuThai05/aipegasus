@@ -49,8 +49,11 @@ export default function HomePage() {
           // Conversation View
           <div className="flex-1 flex flex-col">
             <ChatConversation messages={currentChat.messages} />
-            <div className="p-4 border-t border-border">
+            <div className="p-4 space-y-2">
               <ChatInput onSend={handleSend} className="max-w-3xl mx-auto" />
+              <p className="text-xs text-muted-foreground text-center max-w-3xl mx-auto">
+                PegaSus can make mistakes, so double-check important details.
+              </p>
             </div>
           </div>
         ) : (

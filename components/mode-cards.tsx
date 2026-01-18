@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils"
 import { useAppStore, type Mode } from "@/lib/store"
 import { GraduationCap, BookOpen, FileQuestion } from "lucide-react"
 
-const modes: { id: Mode; label: string; icon: React.ElementType }[] = [
-  { id: "tutor", label: "Tutor Mode", icon: GraduationCap },
-  { id: "research", label: "Research Mode", icon: BookOpen },
-  { id: "exam", label: "Exam Practice", icon: FileQuestion },
+const modes: { id: Mode; label: string; icon: React.ElementType; color: string }[] = [
+  { id: "tutor", label: "Tutor", icon: GraduationCap, color: "#0B6E4F" },
+  { id: "research", label: "Research", icon: BookOpen, color: "#0063FF" },
+  { id: "exam", label: "Practise", icon: FileQuestion, color: "#F26D3D" },
 ]
 
 export function ModeCards() {
@@ -24,14 +24,31 @@ export function ModeCards() {
             key={mode.id}
             onClick={() => setCurrentMode(mode.id)}
             className={cn(
-              "flex flex-col items-center justify-center gap-2 p-4 rounded-xl transition-all duration-200 aspect-square",
+              "flex flex-col items-center justify-center gap-2 p-4 rounded-xl transition-all duration-200 aspect-square shadow-sm",
               isActive
-                ? "bg-primary/20 ring-2 ring-primary"
-                : "bg-secondary hover:bg-[#505050] dark:hover:bg-[#505050]",
+                ? "ring-2 shadow-md"
+                : "bg-secondary hover:bg-sidebar-accent",
             )}
+            style={
+              isActive
+                ? {
+                    borderColor: mode.color,
+                    borderWidth: "2px",
+                    borderStyle: "solid",
+                  }
+                : {}
+            }
           >
-            <mode.icon className={cn("h-6 w-6", isActive ? "text-primary" : "text-muted-foreground")} />
-            <span className={cn("text-sm font-medium text-center", isActive && "text-primary")}>{mode.label}</span>
+            <mode.icon
+              className={cn("h-6 w-6", isActive ? "" : "text-muted-foreground")}
+              style={isActive ? { color: mode.color } : {}}
+            />
+            <span
+              className={cn("text-sm font-medium text-center", isActive ? "" : "text-muted-foreground")}
+              style={isActive ? { color: mode.color } : {}}
+            >
+              {mode.label}
+            </span>
           </button>
         )
       })}
