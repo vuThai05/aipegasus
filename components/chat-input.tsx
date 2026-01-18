@@ -5,20 +5,23 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Paperclip, Image, FileText, ArrowUp } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 
 interface ChatInputProps {
   onSend: (message: string) => void
   placeholder?: string
   className?: string
+  isLoading?: boolean
+  disabled?: boolean
 }
 
-export function ChatInput({ onSend, placeholder = "Ask PegaSus anything...", className }: ChatInputProps) {
+export function ChatInput({ onSend, placeholder = "Ask PegaSus anything...", className, isLoading = false, disabled = false }: ChatInputProps) {
   const [message, setMessage] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (message.trim()) {
+    if (message.trim() && !isLoading && !disabled) {
       onSend(message.trim())
       setMessage("")
     }
@@ -34,15 +37,20 @@ export function ChatInput({ onSend, placeholder = "Ask PegaSus anything...", cla
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none placeholder:text-muted-foreground text-foreground dark:text-white"
+            disabled={isLoading || disabled}
+            className="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none placeholder:text-muted-foreground text-foreground dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <Button
             type="submit"
             size="icon"
-            className="h-9 w-9 rounded-full bg-primary hover:bg-primary/90 shrink-0 ml-2"
-            disabled={!message.trim()}
+            className="h-9 w-9 rounded-full bg-primary hover:bg-primary/90 shrink-0 ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!message.trim() || isLoading || disabled}
           >
-            <ArrowUp className="h-5 w-5 text-white" />
+            {isLoading ? (
+              <Spinner className="h-5 w-5 text-white" />
+            ) : (
+              <ArrowUp className="h-5 w-5 text-white" />
+            )}
           </Button>
         </div>
         {/* Attachment Actions Row */}

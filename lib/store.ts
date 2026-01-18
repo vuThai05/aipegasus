@@ -7,6 +7,9 @@ export interface Message {
   role: "user" | "assistant"
   content: string
   timestamp: Date
+  isLoading?: boolean
+  error?: string
+  retryCount?: number
 }
 
 export interface Chat {
@@ -26,6 +29,8 @@ interface AppState {
   settingsOpen: boolean
   settingsTab: string
   currentMode: Mode
+  isLoading: boolean
+  lastError: string | null
 
   // Actions
   setCurrentChatId: (id: string | null) => void
@@ -33,8 +38,11 @@ interface AppState {
   setSettingsOpen: (open: boolean) => void
   setSettingsTab: (tab: string) => void
   setCurrentMode: (mode: Mode) => void
+  setLoading: (loading: boolean) => void
+  setError: (error: string | null) => void
   createNewChat: () => void
-  addMessage: (chatId: string, message: Omit<Message, "id" | "timestamp">) => void
+  addMessage: (chatId: string, message: Omit<Message, "id" | "timestamp">, messageId?: string) => void
+  updateMessage: (chatId: string, messageId: string, updates: Partial<Message>) => void
   deleteChat: (id: string) => void
   renameChat: (id: string, title: string) => void
   archiveChat: (id: string) => void
@@ -81,12 +89,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   settingsOpen: false,
   settingsTab: "general",
   currentMode: "tutor",
+  isLoading: false,
+  lastError: null,
 
   setCurrentChatId: (id) => set({ currentChatId: id }),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
   setSettingsOpen: (open) => set({ settingsOpen: open }),
   setSettingsTab: (tab) => set({ settingsTab: tab }),
   setCurrentMode: (mode) => set({ currentMode: mode }),
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ lastError: error }),
 
   createNewChat: () => {
     const newChat: Chat = {
@@ -103,10 +115,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     }))
   },
 
-  addMessage: (chatId, message) => {
+  addMessage: (chatId, message, messageId?: string) => {
     const newMessage: Message = {
       ...message,
-      id: Date.now().toString(),
+      id: messageId || Date.now().toString(),
       timestamp: new Date(),
     }
     set((state) => ({
@@ -120,6 +132,22 @@ export const useAppStore = create<AppState>((set, get) => ({
                 chat.messages.length === 0 && message.role === "user"
                   ? message.content.slice(0, 30) + "..."
                   : chat.title,
+            }
+          : chat,
+      ),
+    }))
+  },
+
+  updateMessage: (chatId, messageId, updates) => {
+    set((state) => ({
+      chats: state.chats.map((chat) =>
+        chat.id === chatId
+          ? {
+              ...chat,
+              messages: chat.messages.map((msg) =>
+                msg.id === messageId ? { ...msg, ...updates } : msg,
+              ),
+              updatedAt: new Date(),
             }
           : chat,
       ),
