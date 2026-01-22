@@ -2,6 +2,13 @@ import { create } from "zustand"
 
 export type Mode = "tutor" | "research" | "exam"
 
+export interface Source {
+  text: string
+  score: number
+  dense_score: number
+  link: string | null
+}
+
 export interface Message {
   id: string
   role: "user" | "assistant"
@@ -10,6 +17,7 @@ export interface Message {
   isLoading?: boolean
   error?: string
   retryCount?: number
+  sources?: Source[]
 }
 
 export interface Chat {
@@ -125,14 +133,14 @@ export const useAppStore = create<AppState>((set, get) => ({
       chats: state.chats.map((chat) =>
         chat.id === chatId
           ? {
-              ...chat,
-              messages: [...chat.messages, newMessage],
-              updatedAt: new Date(),
-              title:
-                chat.messages.length === 0 && message.role === "user"
-                  ? message.content.slice(0, 30) + "..."
-                  : chat.title,
-            }
+            ...chat,
+            messages: [...chat.messages, newMessage],
+            updatedAt: new Date(),
+            title:
+              chat.messages.length === 0 && message.role === "user"
+                ? message.content.slice(0, 30) + "..."
+                : chat.title,
+          }
           : chat,
       ),
     }))
@@ -143,12 +151,12 @@ export const useAppStore = create<AppState>((set, get) => ({
       chats: state.chats.map((chat) =>
         chat.id === chatId
           ? {
-              ...chat,
-              messages: chat.messages.map((msg) =>
-                msg.id === messageId ? { ...msg, ...updates } : msg,
-              ),
-              updatedAt: new Date(),
-            }
+            ...chat,
+            messages: chat.messages.map((msg) =>
+              msg.id === messageId ? { ...msg, ...updates } : msg,
+            ),
+            updatedAt: new Date(),
+          }
           : chat,
       ),
     }))

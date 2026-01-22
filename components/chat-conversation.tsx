@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import type { Message } from "@/lib/store"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -14,8 +15,17 @@ interface ChatConversationProps {
 }
 
 export function ChatConversation({ messages, onRetry }: ChatConversationProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div className="p-6 space-y-6">
       {messages.map((message) => (
         <div key={message.id} className={cn("flex gap-4", message.role === "user" ? "justify-end" : "justify-start")}>
           {message.role === "assistant" && (
@@ -61,6 +71,29 @@ export function ChatConversation({ messages, onRetry }: ChatConversationProps) {
             ) : (
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content || ""}</p>
             )}
+
+            {message.sources && message.sources.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-primary-foreground/20">
+                <p className="text-xs font-semibold mb-2 opacity-70">Sources</p>
+                <div className="space-y-2">
+                  {message.sources.map((source, idx) => (
+                    <div key={idx} className="text-xs bg-background/50 p-2 rounded border border-border/50">
+                      <p className="opacity-90 line-clamp-2 italic">"{source.text}"</p>
+                      {source.link && (
+                        <a
+                          href={source.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline mt-1 block"
+                        >
+                          View Source &rarr;
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           {message.role === "user" && (
             <Avatar className="h-8 w-8 shrink-0">
@@ -69,6 +102,7 @@ export function ChatConversation({ messages, onRetry }: ChatConversationProps) {
           )}
         </div>
       ))}
+      <div ref={messagesEndRef} />
     </div>
   )
 }
